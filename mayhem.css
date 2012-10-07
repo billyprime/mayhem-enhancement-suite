@@ -1,0 +1,257 @@
+/* Globals */
+
+.mes-message {
+	display: block;
+	clear: both;
+}
+
+.mes-loading {
+	background-image: url('chrome-extension://__MSG_@@extension_id__/image/spinner.gif');
+	background-repeat: no-repeat;
+}
+
+/* Top Nav */
+
+/* Override header.  I don't like to use !important if I can avoid it. */
+#bg_wrap {
+	position: relative;
+}
+#bg_wrap .header-n {
+	height: 22px;
+}
+
+.mes-branding {
+	position: absolute;
+	left: 204px;
+	top: 85px;
+	color: #fff;
+	font-size: 10px;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
+}
+
+#mes-main-nav {
+	position: fixed;
+	top: 0;
+	background: black;
+	width: 800px;
+	height: 22px;
+	z-index: 2;
+}
+
+#mes-main-nav a {
+	color: #fff;
+	text-decoration: none;
+}
+
+#mes-main-nav a.toggle {
+	background: transparent url('chrome-extension://__MSG_@@extension_id__/image/arrow_down.png') no-repeat right 8px;
+	padding-right: 17px;
+}
+
+#mes-main-nav a:hover,
+#mes-main-nav a:active {
+	text-decoration: underline;
+}
+
+#mes-main-nav ul {
+	margin: 0;
+}
+
+#mes-main-nav ul li {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 0px 0 0;
+}
+
+#mes-main-nav ul li a {
+	display: block;
+	height: 2em;
+	padding: 3px 10px 2px;
+}
+
+#mes-main-nav ul li ul {
+	display: none;
+	position: absolute;
+	top: 23px;
+
+	margin: 0 0 0 10px;
+	padding: 5px 0 0;
+
+	background-color: rgba(0,0,0, 0.8);
+	border: 1px solid rgba(255,255,255, 0.7);
+}
+
+#mes-main-nav ul li ul li {
+	display: block;
+	margin: 0;
+}
+
+.mes-about {
+	float: right;
+}
+
+#mes-main-nav .mes-unread-link {
+	padding: 4px 0px 1px;
+	height: 12px;
+	margin-left: 7px;
+}
+
+#mes-main-nav .mes-unread-link:hover {
+	border-bottom: 1px solid #fff;
+	text-decoration: none;
+}
+
+
+/* Announcements */
+#mini-announce-form {
+	margin: 4px 10px 10px;
+}
+
+#mini-announce-form input[type="text"] {
+	padding: 4px 6px;
+	font-size: 1.1em;
+	width: 250px;
+}
+
+#mini-announce-form.mes-loading {
+	background-position: center right;
+}
+
+/* Dialog Boxes */
+
+.mes-windowshade {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+}
+
+.mes-dialog-outer {
+	position: relative;
+	top: 175px;
+	width: 400px;
+	margin: 0 auto;
+
+	color: #fff;
+	background-color: rgba(0,0,0, 0.8);
+	border: 2px solid rgba(220,220,220, 0.8);
+
+	padding: 12px 15px;
+}
+
+.mes-dialog-outer .closer {
+	position: absolute;
+	right: -10px;
+	top: -10px;
+	color: #fff;
+	font-weight: bold;
+	font-size: 14px;
+	background-color: rgba(0,17,17, 0.9);
+	border: 2px solid rgba(255,255,255, 0.9);
+	border-radius: 20px;
+	padding: 3px 6px;
+	text-decoration: none;
+}
+
+.mes-dialog .mes-title {
+	width: 100%;
+	text-align: center;
+
+	margin-top: 0;
+	color: #fff;
+	font-weight: 400;
+}
+
+/* About content */
+#mes-about-link {
+	font-weight: bold;
+	color: #C8A020 !important;
+}
+
+
+#mes-about {
+	/* Verdana is SO 2001. Raleway is nice, I bundled it here with Google Code. */
+	/* Only awesome people will ever see the Verlag Extra Light though. Such a stunning font. */
+	/* Also check out HFJ's Archer, btw. */
+	font-family: 'Verlag', 'Raleway', sans-serif;
+	font-weight: 100;
+}
+
+#mes-about a {
+	color: #C8A020;
+}
+
+/* Tabs */
+.tabs {
+	margin-left: 0;
+	list-style: none;
+}
+.tabs li {
+	display: inline-block;
+	border: 1px solid #999;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	background-color: #ccc;
+	margin: 0 10px -1px 0;
+}
+
+.tabs li.active {
+	background-color: #fff;
+	border-bottom: 0;
+}
+
+.tabs li a {
+	display: block;
+	padding: 3px 6px;
+	color: #000;
+	text-decoration: none;
+}
+
+.panes {
+	background-color: #fff;
+	color: #333;
+}
+
+.panes .pane {
+	border: 1px solid #999;
+	padding: 10px;
+	display: none;
+}
+.panes .pane.active {
+	display: block;
+}
+
+#mes-settings {
+	font-size: 10px;
+}
+#mes-settings h3 {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+}
+
+#mes-settings ul {
+	list-style: none;
+}
+
+ ul.mes-options li {
+	display: inline-block;
+	width: 180px;
+}
+
+
+/* Magic hiding goodness */
+.hide-hide .rank-hide,
+.hide-no .rank-no,
+.hide-digital-artist .type-digital-artist,
+.hide-retoucher .type-retoucher,
+.hide-body-painter .type-body-painter,
+.hide-publication .type-publication,
+.hide-filmmaker .type-filmmaker,
+.hide-approved-agency .type-approved-agency,
+.hide-event-planner .type-event-planner,
+.hide-casting-director .type-casting-director,
+.hide-advertiser .type-advertiser
+{
+	display: none;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "Mayhem Enhancement Suite",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Additions for ModelMayhem",
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://www.modelmayhem.com/*"],
+      "css": ["mayhem.css"],
+      "js": ["lib/jquery_1_8_1.min.js", "lib/fonts.js", "mayhem.js"]
+    }
+  ],
+  "web_accessible_resources": [
+  	"image/arrow_down.png",
+  	"image/spinner.gif"
+  ]
+}
