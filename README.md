@@ -7,7 +7,7 @@ Installation
 ------------
 
 1. Download and Unzip the archive.
-2. Open Chrome and open the [Extension Settings](chrome://extensions)
+2. Open Chrome and open the Extension Settings (enter chrome://extensions in the location bar)
 3. Click "Load unpacked extension..." and select the unzipped archive
 
 
