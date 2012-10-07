@@ -21,6 +21,7 @@ FAQ
 ---
 
 - Will you make a version of this plugin for Firefox/IE/Opera/Safari/Whatever?
+
   No, but feel free to fork it and make your own!
 
 TODO
