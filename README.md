@@ -1,7 +1,7 @@
 Mayhem Enhancement Suite
 ========================
 
-Custom Chrome plugin for ModelMayhem to add some nice extras.
+Chrome plugin for ModelMayhem to add some nice extras.
 
 Installation
 ------------
