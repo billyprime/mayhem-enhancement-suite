@@ -3,6 +3,7 @@ $(document).ready(function() {
     init_pagetype();
     init_navbar();
     init_rank_selects();
+    init_submenus();
 });
 
 /* Timeouts Helper */
@@ -86,23 +87,21 @@ function init_pagetype() {
     else if(/^\/(member.php\?id=)?([0-9]+)$/.exec(path)) {
         pagetype = 'member';
     }
-    else if(false) {
+    else if(/^\/portfolio\/([0-9]+)/.exec(path)) {
         pagetype = 'photo_list';
     }
-    else if(false) {
+    else if(/^\/portfolio\/pic\/([0-9]+)/.exec(path)) {
         pagetype = 'photo_detail';
     }
     else if(/^\/tags\/([0-9]+)/.exec(path)) {
         pagetype = 'tags';
     }
-    else if(false) {
+    else if(/^\/browse\//.exec(path)) {
         pagetype = 'search';
     }
     else if(false) {
         pagetype = 'forum';
     }
-
-//    console.log(pagetype);
 }
 
 /* Storage Handlers */
@@ -156,6 +155,7 @@ var ranks = {
 function init_rank_selects() {
     switch(pagetype) {
         case 'home':
+            init_vips();
             init_announcements();
             break;
 
@@ -184,7 +184,7 @@ function iterate_pic_wrappers(wrappers) {
 
     wrappers.each( function(i, elm) {
         elm = $(elm);
-        var link = elm.find('a[href^="member.php?id="]');
+        var link = elm.find('a').first();
 
         var container = elm.parent().parent();
 
@@ -193,6 +193,10 @@ function iterate_pic_wrappers(wrappers) {
             var param_name = 'member_rank_'+member_id;
 
             var name = elm.find('.small strong');
+            if(!name.length) {
+                name = $(link);
+                container = elm;
+            }
 
             var type = 'type-'+elm.find('font').text().toLowerCase().replace(' ', '-').replace('/', '-');
 
@@ -204,13 +208,35 @@ function iterate_pic_wrappers(wrappers) {
 
             get_val(param_name, function(value) {
                 if(value) {
-                    elm.parent().parent().addClass('rank-'+value.toLowerCase());
+                    container.addClass('rank-'+value.toLowerCase());
                 }
             });
         }
     });
 }
 
+function init_vips() {
+    if($('.vipStarsBlock').length) {
+        var wrappers = $('.vipStarsBlock #MemberInfo td')
+
+        if(wrappers.children().length > 0) {
+            var labels = $('.vipStarsBlock #MemberInfo td');
+            $('.vipStarsBlock .vipStarImg td').each(function(i, elm) {
+                $(labels[i]).prepend($(elm).html());
+            });
+            $('.vipStarsBlock .vipStarImg').remove();
+
+
+            iterate_pic_wrappers(wrappers);
+        }
+        else {
+            // Retry, announcements aren't loaded yet.
+            clearTimeout(timeouts['init_vips']);
+            timeouts['init_vips'] = window.setTimeout(init_vips, 500);
+        }
+
+    }
+}
 
 function init_announcements() {
     if($('#announcementsArea').length) {
@@ -224,8 +250,8 @@ function init_announcements() {
         }
         else {
             // Retry, announcements aren't loaded yet.
-            clear_all_timeouts();
-            timeouts.push(window.setTimeout(init_announcements, 500));
+            clearTimeout(timeouts['init_announcements']);
+            timeouts['init_announcements'] = window.setTimeout(init_announcements, 500);
         }
     }
 }
@@ -481,6 +507,10 @@ function init_navbar() {
 
             $('.mes-nav-list').not(elm).hide(100);
             elm.toggle(100);
+
+            if(id == '#mes-announcement') {
+                $('#mini-announce-form input[name="announcement"]').focus();
+            }
         });
 
         $('#mini-announce-form').submit(function(e) {
@@ -560,14 +590,19 @@ function init_navbar() {
         settings_box = $(settings_box);
 
         var rank_options = {
-            'hide-hide': 'Hide',
-            'hide-no': 'No'
+            'hide-yes': 'Yes',
+            'hide-maybe': 'Maybe',
+            'hide-no': 'No',
+            'hide-hide': 'Hide'
         };
 
         var type_options = {
+            'hide-photographer': 'Photographer',
+            'hide-model': 'Model',
             'hide-digital-artist': 'Digital Artist',
             'hide-retoucher': 'Retoucher',
             'hide-body-painter': 'Body Painter',
+            'hide-artist-painter': 'Artist/Painter',
             'hide-wardrobe-stylist': 'Wardrobe Stylist',
             'hide-publication': 'Publication',
             'hide-filmmaker': 'Filmmaker',
@@ -650,6 +685,86 @@ function build_options(options) {
 
     // We return the content before the content is filled.  Magic.
     return content;
+}
+
+function init_submenus() {
+    if(pagetype == 'photo_list') {
+        var table = $('#main_container_content table').first();
+        table.addClass('mes-submenu');
+
+        /* This is a bit brittle, but works for now. */
+
+        var tds = table.find('td');
+
+        // Get the name, then remove it.
+        var right_col = tds.last();
+        var name = right_col.find('a strong').first().text().trim();
+        right_col.find('a strong').first().parent().remove();
+
+        var left_col = tds.first();
+        // Set the title of the Profile link to the user's name.
+        left_col.find('a').first().text(name);
+
+        // Move the Credited Photos to the left
+        left_col.append(
+            $('<div></div>').append(right_col.find('a strong').first().parent())
+        );
+
+        // Get rid of the fluff
+        right_col.html(right_col.html().replace(/Back to profile:(\s*<br>)+/, ''));
+
+        // Shorten the titles
+        right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
+
+        // Add the rank selector
+        var matcher = /([0-9]+)$/;
+        var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
+        var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
+        left_col.append(rank_select);
+    }
+    else if(pagetype == 'photo_detail') {
+        var table = $('#main_container_content table').first();
+        table.addClass('mes-submenu');
+
+        /* This is a bit brittle, but works for now. */
+
+        var tds = table.find('td');
+
+        var left_col = tds.first();
+
+        // Add the rank selector
+        var matcher = /([0-9]+)$/;
+        var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
+        var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
+        left_col.append(rank_select);
+
+        var right_col = tds.last();
+
+        // Replace all the links with icons
+        var report_link = right_col.find('a[href^="/report/"]');
+        report_link.addClass('mes-icon-link');
+        report_link.addClass('mes-flag-user-link');
+        report_link.attr('title', 'Report Image');
+        report_link.next('br').remove();
+
+        var share_link = right_col.find('a[href^="/share_pic/"]');
+        share_link.addClass('mes-icon-link');
+        share_link.addClass('mes-email-link');
+        share_link.attr('title', 'Email This Image');
+        share_link.next('br').remove();
+
+        var list_link = right_col.find('a[href^="/list/add_to_list/"]');
+        list_link.addClass('mes-icon-link');
+        list_link.addClass('mes-add-to-list-link');
+        list_link.attr('title', 'Add to List');
+
+        // Strip those trailing BRs
+        right_col.html( right_col.html().replace(/(\s*<br>)+\s*$/, '') );
+
+        // Shorten the titles
+        right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
+
+    }
 }
 
 

@@ -15,7 +15,10 @@
     }
   ],
   "web_accessible_resources": [
-  	"image/arrow_down.png",
-  	"image/spinner.gif"
+    "image/arrow_down.png",
+    "image/spinner.gif",
+    "image/email.png",
+    "image/exclamation.png",
+    "image/heart_add.png"
   ]
 }
