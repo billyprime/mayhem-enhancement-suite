@@ -27,14 +27,15 @@ FAQ
 TODO
 ----
 
-- Ranks on all pages.  Currently, only the announcements feed, profile pages, and search results are supported.
+- Ranks on all pages.  Currently, only the announcements feed, profile pages, tags, and search results are supported.
 - Allow login without reloading the page.
 - Switch storage engine to browser-based SQL (from current key-value store).
 - Location geocoder
 - Custom mapping functionality
 - Custom notes on each user
-- Metadata on each user (Inbox history)
+- Metadata on each user (Inbox history)x`
 - Friend Request Notification menu item (to match Inbox notification)
+- Package extension
 
 License
 -------
