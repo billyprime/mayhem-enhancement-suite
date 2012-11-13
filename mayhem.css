@@ -269,7 +269,7 @@
 
 /* Token icons */
 .mes-icon-link {
-	display: inline-block;
+	display: inline-block !important;
 	overflow: hidden;
 	height: 16px;
 	width: 0px;
