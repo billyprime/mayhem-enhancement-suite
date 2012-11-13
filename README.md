@@ -35,7 +35,7 @@ TODO
 - Location geocoder
 - Custom mapping functionality
 - Custom notes on each user
-- Metadata on each user (Inbox history)x`
+- Metadata on each user (Inbox history)
 - Friend Request Notification menu item (to match Inbox notification)
 - Encapsulate init_pagetype into custom event handling. Execute this at runtime, not document.ready
 - Package extension
