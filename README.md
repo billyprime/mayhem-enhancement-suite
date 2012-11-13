@@ -9,6 +9,8 @@ Features
 - Floating nav bar gives quick access to frequently-used tools (such as Announcements) on the site.
 - A custom rank can be set on each user.  Available ranks are Hide, No, Maybe, Yes, and OMFG Yes.
 - Selected ranks and particular account types (e.g. Digital Artist, Retoucher) can be hidden altogether through the Settings menu.
+- Keyboard navigation in photo detail view.
+- Floating header bar in gallery / photo detail views.
 
 Installation
 ------------
@@ -35,6 +37,7 @@ TODO
 - Custom notes on each user
 - Metadata on each user (Inbox history)x`
 - Friend Request Notification menu item (to match Inbox notification)
+- Encapsulate init_pagetype into custom event handling. Execute this at runtime, not document.ready
 - Package extension
 
 License

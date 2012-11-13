@@ -4,6 +4,7 @@ $(document).ready(function() {
     init_navbar();
     init_rank_selects();
     init_submenus();
+    init_paging();
 });
 
 /* Timeouts Helper */
@@ -93,6 +94,9 @@ function init_pagetype() {
     else if(/^\/portfolio\/pic\/([0-9]+)/.exec(path)) {
         pagetype = 'photo_detail';
     }
+    else if(/^\/comments\/add_new_comment\//.exec(path)) {
+        pagetype = 'add_comment';
+    }
     else if(/^\/tags\/([0-9]+)/.exec(path)) {
         pagetype = 'tags';
     }
@@ -169,10 +173,13 @@ function init_rank_selects() {
             init_tags();
             break;
 
-        case 'tags' :
+        case 'tags':
             tags_pagination_reinit();
             init_tags();
             break;
+
+        case 'photo_detail':
+            init_credits();
     }
 
 
@@ -741,7 +748,7 @@ function init_submenus() {
         var right_col = tds.last();
 
         // Replace all the links with icons
-        var report_link = right_col.find('a[href^="/report/"]');
+        var report_link = right_col.find('a[href^="/report"]');
         report_link.addClass('mes-icon-link');
         report_link.addClass('mes-flag-user-link');
         report_link.attr('title', 'Report Image');
@@ -764,6 +771,35 @@ function init_submenus() {
         // Shorten the titles
         right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
 
+    }
+}
+
+function init_credits() {
+//     var links = $('#pic_credits a');
+//     var matcher = /([0-9]+)$/;
+//
+//     for(i in links) {
+//         var link = $(links[i]);
+// //        console.log(i, link.text());
+//         var member_id = matcher.exec( link.attr('href') );
+//         var desc = link.next('span');
+//
+//         //desc.next().after(get_rank_select(member_id));
+//     }
+}
+
+function init_paging() {
+    if(pagetype == 'photo_detail') {
+        // We have to inject event handling code into the page to
+        // Use the native click handlers.
+        var inject_script = "$(document).keydown(function(e) { if (e.keyCode == 37) { console.log('prev'); $('a.prev').click(); } else if(e.keyCode == 39) { console.log('next'); $('a.next').click(); }});";
+
+        var s = document.createElement('script');
+        s.textContent = inject_script;
+        s.onload = function() {
+            this.parentNode.removeChild(this);
+        };
+        document.head.appendChild(s);
     }
 }
 
