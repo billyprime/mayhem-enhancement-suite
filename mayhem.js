@@ -180,6 +180,7 @@ function init_rank_selects() {
 
         case 'photo_detail':
             init_credits();
+            init_comments();
     }
 
 
@@ -728,6 +729,22 @@ function init_submenus() {
         var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
         var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
         left_col.append(rank_select);
+
+        /* Rebuild Galleries */
+        var gallery = $('.albumProfolio');
+        var new_gallery = $('<ul></ul>');
+
+        var galleries = gallery.find('td.portfolioIcon');
+
+        if(galleries.length > 0) {
+            galleries.each( function(i, elm) {
+                new_gallery.append($('<li></li>').html( $(elm).html() ));
+            });
+
+            table.after($('<div class="mes-gallery-thumbs"></div>').append(new_gallery));
+        }
+        gallery.remove();
+        $('.head_top.albumBlockHeader').first().remove();
     }
     else if(pagetype == 'photo_detail') {
         var table = $('#main_container_content table').first();
@@ -775,17 +792,29 @@ function init_submenus() {
 }
 
 function init_credits() {
-//     var links = $('#pic_credits a');
-//     var matcher = /([0-9]+)$/;
-//
-//     for(i in links) {
-//         var link = $(links[i]);
-// //        console.log(i, link.text());
-//         var member_id = matcher.exec( link.attr('href') );
-//         var desc = link.next('span');
-//
-//         //desc.next().after(get_rank_select(member_id));
-//     }
+    var links = $('#pic_credits').first().find('a');
+    var matcher = /([0-9]+)$/;
+
+    links.each( function (i, elm) {
+        var link = $(elm);
+        console.log(elm);
+        var member_id = matcher.exec( link.attr('href') )[1];
+        console.log(member_id);
+        link.parent().append(get_rank_select(member_id));
+    });
+}
+
+function init_comments() {
+    var wrappers = $('.commentstable tr td:first-child');
+
+    if(wrappers.children().length > 0) {
+        iterate_pic_wrappers(wrappers);
+    }
+    else {
+        // Retry, comments aren't loaded yet.
+        clearTimeout(timeouts['init_comments']);
+        timeouts['init_comments'] = window.setTimeout(init_comments, 500);
+    }
 }
 
 function init_paging() {
