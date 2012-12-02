@@ -258,6 +258,63 @@
 	color: #fff;
 }
 
+.mes-gallery-thumbs ul {
+	height: 175px;
+	width: 770px;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	white-space: nowrap;
+	margin: 0 auto;
+}
+
+.mes-gallery-thumbs li {
+	text-align: center;
+	display: inline-block;
+	white-space: normal;
+	margin: 0 10px 0 0;
+	vertical-align: top;
+	width: 100px;
+}
+
+.mes-gallery-thumbs li img,
+.mes-gallery-thumbs li .naBox{
+	width: 75px !important;
+	height: auto;
+	max-height: 140px;
+	padding: 0 !important;
+}
+/* Test */
+.mes-gallery-thumbs {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background: #fff;
+	height: 175px;
+	width: 90%;
+	padding: 10px 5%;
+	margin: 0;
+	border-top: 2px solid #666;
+	z-index: 1;
+}
+.mes-gallery-thumbs li,
+.mes-gallery-thumbs li img,
+.mes-gallery-thumbs li .naBox{
+	transition: width 0.5s, max-height 0.5s;
+	-moz-transition: width 0.5s, max-height 0.5s; /* Firefox 4 */
+	-webkit-transition: width 0.5s, max-height 0.5s; /* Safari and Chrome */
+	-o-transition: width 0.5s, max-height 0.5s; /* Opera */
+}
+
+.mes-gallery-thumbs li:hover {
+	width: 140px;
+}
+
+.mes-gallery-thumbs li:hover img,
+.mes-gallery-thumbs li:hover .naBox{
+	width: 120px !important;
+	max-height: 180px;
+}
+
 .bgWhite.mes-submenu {
 	background-color: rgba(0,0,0,0.7) !important;
 }
