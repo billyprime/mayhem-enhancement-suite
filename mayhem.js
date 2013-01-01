@@ -187,26 +187,26 @@ function init_rank_selects() {
 
 }
 
-function iterate_pic_wrappers(wrappers) {
+function iterate_pic_wrappers(wrappers, find_name_elm, find_type_elm) {
     var matcher = /([0-9]+)$/;
 
     wrappers.each( function(i, elm) {
         elm = $(elm);
         var link = elm.find('a').first();
 
-        var container = elm.parent().parent();
+        var container = elm;
 
         if(link.length) {
             var member_id = matcher.exec( $(link).attr('href') )[1];
             var param_name = 'member_rank_'+member_id;
 
-            var name = elm.find('.small strong');
+            var name = find_name_elm(elm);
             if(!name.length) {
                 name = $(link);
                 container = elm;
             }
 
-            var type = 'type-'+elm.find('font').text().toLowerCase().replace(' ', '-').replace('/', '-');
+            var type = find_type_elm(elm);
 
             container.addClass(type);
 
@@ -215,9 +215,11 @@ function iterate_pic_wrappers(wrappers) {
             container.attr('id', 'member-'+member_id);
 
             get_val(param_name, function(value) {
+                var rank = 'rank-unranked';
                 if(value) {
-                    container.addClass('rank-'+value.toLowerCase());
+                    rank = 'rank-'+value.toLowerCase();
                 }
+                container.addClass(rank);
             });
         }
     });
@@ -225,7 +227,7 @@ function iterate_pic_wrappers(wrappers) {
 
 function init_vips() {
     if($('.vipStarsBlock').length) {
-        var wrappers = $('.vipStarsBlock #MemberInfo td')
+        var wrappers = $('.vipStarsBlock td')
 
         if(wrappers.children().length > 0) {
             var labels = $('.vipStarsBlock #MemberInfo td');
@@ -235,7 +237,10 @@ function init_vips() {
             $('.vipStarsBlock .vipStarImg').remove();
 
 
-            iterate_pic_wrappers(wrappers);
+            iterate_pic_wrappers(wrappers,
+                function(elm) { return elm.find('.small strong') },
+                function(elm) { return 'type-'+elm.find('font').text().toLowerCase().replace(' ', '-').replace('/', '-'); }
+            );
         }
         else {
             // Retry, announcements aren't loaded yet.
@@ -248,13 +253,16 @@ function init_vips() {
 
 function init_announcements() {
     if($('#announcementsArea').length) {
-        var wrappers = $('#announcementsArea #pic_wrapper');
+        var wrappers = $('#announcementsArea tr');
 
         // First, cleanup - remove the spacers.
         $('#announcementsArea table tr:odd').remove();
 
         if(wrappers.children().length > 0) {
-            iterate_pic_wrappers(wrappers);
+            iterate_pic_wrappers(wrappers,
+                function(elm) { return elm.find('.small strong') },
+                function(elm) { return 'type-'+elm.find('font').text().toLowerCase().replace(' ', '-').replace('/', '-'); }
+            );
         }
         else {
             // Retry, announcements aren't loaded yet.
@@ -268,18 +276,25 @@ function init_search_results() {
     if($('.bResultWraper').length) {
         var rows = $('.bResultWraper .bInfoWraper');
 
+
         var matcher = /([0-9]+)$/;
 
         if(rows.length) {
-            rows.each( function(i, elm) {
-                elm = $(elm);
-                var link = $(elm.find('.bAvatar a').first());
-                var member_id = matcher.exec( $(link).attr('href') )[1];
+            iterate_pic_wrappers(
+                rows,
+                function(elm) { return elm.find('.bMemberData a.bold') },
+                function(elm) { return elm.find('.bAvatar div') }
+            );
 
-                var name = elm.find('.bMemberData td:first-child a');
-
-                name.parent().append(get_rank_select(member_id));
-            });
+            // rows.each( function(i, elm) {
+//                 elm = $(elm);
+//                 var link = $(elm.find('.bAvatar a').first());
+//                 var member_id = matcher.exec( $(link).attr('href') )[1];
+//
+//                 var name = elm.find('.bMemberData td:first-child a');
+//
+//                 name.parent().append(get_rank_select(member_id));
+//             });
         }
         else {
             // Retry, results aren't loaded yet.
@@ -792,23 +807,28 @@ function init_submenus() {
 }
 
 function init_credits() {
+    $('#pic_credits').html(
+        $('#pic_credits').html().replace(/\(|\)/g,'')
+    );
     var links = $('#pic_credits').first().find('a');
     var matcher = /([0-9]+)$/;
 
     links.each( function (i, elm) {
         var link = $(elm);
-        console.log(elm);
         var member_id = matcher.exec( link.attr('href') )[1];
-        console.log(member_id);
-        link.parent().append(get_rank_select(member_id));
+        link.next().after(get_rank_select(member_id));
     });
 }
 
 function init_comments() {
-    var wrappers = $('.commentstable tr td:first-child');
+    var wrappers = $('.commentstable');
 
     if(wrappers.children().length > 0) {
-        iterate_pic_wrappers(wrappers);
+        iterate_pic_wrappers(wrappers,
+            function(elm) { return elm.find('.small strong') },
+            function(elm) { return $() /* There is no type on comments.  Boo. */ }
+        );
+
     }
     else {
         // Retry, comments aren't loaded yet.

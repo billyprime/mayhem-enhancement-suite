@@ -363,3 +363,36 @@
 {
 	display: none;
 }
+
+/* Not-hiding display */
+.rank-omfgyes {
+	background-color: #ddffdd !important;
+}
+
+.rank-yes {
+	background-color: #eeffee !important;
+}
+
+.rank-maybe {
+	background-color: #eeeeff !important;
+}
+
+.rank-no {
+	opacity: 0.5;
+	background-color: #ffeeee !important;
+}
+
+.rank-hide {
+	opacity: 0.4;
+	background-color: #ffdddd !important;
+}
+
+
+.rank-unranked {
+	background-color: #dddddd !important;
+}
+
+/* Ugly */
+.announce_vip {
+	background-color: inherit !important;
+}
