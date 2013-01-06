@@ -1,10 +1,7 @@
 $(document).ready(function() {
     init_branding();
-    init_pagetype();
     init_navbar();
-    init_rank_selects();
-    init_submenus();
-    init_paging();
+    init_pagetype();
 });
 
 /* Timeouts Helper */
@@ -106,6 +103,7 @@ function init_pagetype() {
     else if(false) {
         pagetype = 'forum';
     }
+    $('body').trigger('pageload.'+pagetype);
 }
 
 /* Storage Handlers */
@@ -154,37 +152,6 @@ var ranks = {
     'maybe': 'Maybe',
     'no': 'No',
     'hide': 'Hide'
-}
-
-function init_rank_selects() {
-    switch(pagetype) {
-        case 'home':
-            init_vips();
-            init_announcements();
-            break;
-
-        case 'search':
-            init_search_results();
-            break;
-
-        case 'member':
-            init_main_member();
-            init_toptwelve();
-            init_tags();
-            break;
-
-        case 'tags':
-            tags_pagination_reinit();
-            init_tags();
-            break;
-
-        case 'photo_detail':
-            init_credits();
-            init_comments();
-    }
-
-
-
 }
 
 function iterate_pic_wrappers(wrappers, find_name_elm, find_type_elm) {
@@ -250,6 +217,8 @@ function init_vips() {
 
     }
 }
+/* Binding */
+$('body').bind('pageload.home', init_vips);
 
 function init_announcements() {
     if($('#announcementsArea').length) {
@@ -271,6 +240,8 @@ function init_announcements() {
         }
     }
 }
+/* Binding */
+$('body').bind('pageload.home', init_announcements);
 
 function init_search_results() {
     if($('.bResultWraper').length) {
@@ -304,6 +275,8 @@ function init_search_results() {
 
     }
 }
+/* Binding */
+$('body').bind('pageload.search', init_search_results);
 
 function init_main_member() {
     // This one is easy.  Maybe a little too easy.
@@ -318,6 +291,8 @@ function init_main_member() {
 
     name.after(get_rank_select(member_id));
 }
+/* Binding */
+$('body').bind('pageload.member', init_main_member);
 
 function init_toptwelve() {
     var friend_container = $('.head:contains("Friends")').first().next();
@@ -338,6 +313,8 @@ function init_toptwelve() {
         });
     }
 }
+/* Binding */
+$('body').bind('pageload.member', init_toptwelve);
 
 function init_tags() {
     var tags = $('#tags .tag'); // That was nice of them.
@@ -361,9 +338,10 @@ function init_tags() {
         clear_all_timeouts();
         timeouts.push(window.setTimeout(init_tags, 500));
     }
-
-
 }
+/* Binding */
+$('body').bind('pageload.member', init_tags);
+$('body').bind('pageload.tags', init_tags);
 
 function tags_pagination_reinit() {
     // There's already a click handler, so we just want to add another.
@@ -375,7 +353,8 @@ function tags_pagination_reinit() {
         timeouts.pus(window.setTimeout(tags_pagination_reinit, 500));
     });
 }
-
+/* Binding */
+$('body').bind('pageload.tags', tags_pagination_reinit);
 
 function get_rank_select(id) {
     var param_name = 'member_rank_'+id;
@@ -710,101 +689,103 @@ function build_options(options) {
     return content;
 }
 
-function init_submenus() {
-    if(pagetype == 'photo_list') {
-        var table = $('#main_container_content table').first();
-        table.addClass('mes-submenu');
+function photo_list_submenu() {
+    var table = $('#main_container_content table').first();
+    table.addClass('mes-submenu');
 
-        /* This is a bit brittle, but works for now. */
+    /* This is a bit brittle, but works for now. */
 
-        var tds = table.find('td');
+    var tds = table.find('td');
 
-        // Get the name, then remove it.
-        var right_col = tds.last();
-        var name = right_col.find('a strong').first().text().trim();
-        right_col.find('a strong').first().parent().remove();
+    // Get the name, then remove it.
+    var right_col = tds.last();
+    var name = right_col.find('a strong').first().text().trim();
+    right_col.find('a strong').first().parent().remove();
 
-        var left_col = tds.first();
-        // Set the title of the Profile link to the user's name.
-        left_col.find('a').first().text(name);
+    var left_col = tds.first();
+    // Set the title of the Profile link to the user's name.
+    left_col.find('a').first().text(name);
 
-        // Move the Credited Photos to the left
-        left_col.append(
-            $('<div></div>').append(right_col.find('a strong').first().parent())
-        );
+    // Move the Credited Photos to the left
+    left_col.append(
+        $('<div></div>').append(right_col.find('a strong').first().parent())
+    );
 
-        // Get rid of the fluff
-        right_col.html(right_col.html().replace(/Back to profile:(\s*<br>)+/, ''));
+    // Get rid of the fluff
+    right_col.html(right_col.html().replace(/Back to profile:(\s*<br>)+/, ''));
 
-        // Shorten the titles
-        right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
+    // Shorten the titles
+    right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
 
-        // Add the rank selector
-        var matcher = /([0-9]+)$/;
-        var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
-        var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
-        left_col.append(rank_select);
+    // Add the rank selector
+    var matcher = /([0-9]+)$/;
+    var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
+    var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
+    left_col.append(rank_select);
 
-        /* Rebuild Galleries */
-        var gallery = $('.albumProfolio');
-        var new_gallery = $('<ul></ul>');
+    /* Rebuild Galleries */
+    var gallery = $('.albumProfolio');
+    var new_gallery = $('<ul></ul>');
 
-        var galleries = gallery.find('td.portfolioIcon');
+    var galleries = gallery.find('td.portfolioIcon');
 
-        if(galleries.length > 0) {
-            galleries.each( function(i, elm) {
-                new_gallery.append($('<li></li>').html( $(elm).html() ));
-            });
+    if(galleries.length > 0) {
+        galleries.each( function(i, elm) {
+            new_gallery.append($('<li></li>').html( $(elm).html() ));
+        });
 
-            table.after($('<div class="mes-gallery-thumbs"></div>').append(new_gallery));
-        }
-        gallery.remove();
-        $('.head_top.albumBlockHeader').first().remove();
+        table.after($('<div class="mes-gallery-thumbs"></div>').append(new_gallery));
     }
-    else if(pagetype == 'photo_detail') {
-        var table = $('#main_container_content table').first();
-        table.addClass('mes-submenu');
-
-        /* This is a bit brittle, but works for now. */
-
-        var tds = table.find('td');
-
-        var left_col = tds.first();
-
-        // Add the rank selector
-        var matcher = /([0-9]+)$/;
-        var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
-        var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
-        left_col.append(rank_select);
-
-        var right_col = tds.last();
-
-        // Replace all the links with icons
-        var report_link = right_col.find('a[href^="/report"]');
-        report_link.addClass('mes-icon-link');
-        report_link.addClass('mes-flag-user-link');
-        report_link.attr('title', 'Report Image');
-        report_link.next('br').remove();
-
-        var share_link = right_col.find('a[href^="/share_pic/"]');
-        share_link.addClass('mes-icon-link');
-        share_link.addClass('mes-email-link');
-        share_link.attr('title', 'Email This Image');
-        share_link.next('br').remove();
-
-        var list_link = right_col.find('a[href^="/list/add_to_list/"]');
-        list_link.addClass('mes-icon-link');
-        list_link.addClass('mes-add-to-list-link');
-        list_link.attr('title', 'Add to List');
-
-        // Strip those trailing BRs
-        right_col.html( right_col.html().replace(/(\s*<br>)+\s*$/, '') );
-
-        // Shorten the titles
-        right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
-
-    }
+    gallery.remove();
+    $('.head_top.albumBlockHeader').first().remove();
 }
+/* Binding */
+$('body').bind('pageload.photo_list', photo_list_submenu);
+
+function photo_detail_submenu() {
+    var table = $('#main_container_content table').first();
+    table.addClass('mes-submenu');
+
+    /* This is a bit brittle, but works for now. */
+
+    var tds = table.find('td');
+
+    var left_col = tds.first();
+
+    // Add the rank selector
+    var matcher = /([0-9]+)$/;
+    var member_id = matcher.exec( left_col.find('a').first().attr('href') )[1];
+    var rank_select = $('<div class="mes-rank-box"></div>').append(get_rank_select(member_id));
+    left_col.append(rank_select);
+
+    var right_col = tds.last();
+
+    // Replace all the links with icons
+    var report_link = right_col.find('a[href^="/report"]');
+    report_link.addClass('mes-icon-link');
+    report_link.addClass('mes-flag-user-link');
+    report_link.attr('title', 'Report Image');
+    report_link.next('br').remove();
+
+    var share_link = right_col.find('a[href^="/share_pic/"]');
+    share_link.addClass('mes-icon-link');
+    share_link.addClass('mes-email-link');
+    share_link.attr('title', 'Email This Image');
+    share_link.next('br').remove();
+
+    var list_link = right_col.find('a[href^="/list/add_to_list/"]');
+    list_link.addClass('mes-icon-link');
+    list_link.addClass('mes-add-to-list-link');
+    list_link.attr('title', 'Add to List');
+
+    // Strip those trailing BRs
+    right_col.html( right_col.html().replace(/(\s*<br>)+\s*$/, '') );
+
+    // Shorten the titles
+    right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
+}
+/* Binding */
+$('body').bind('pageload.photo_detail', photo_detail_submenu);
 
 function init_credits() {
     $('#pic_credits').html(
@@ -819,6 +800,8 @@ function init_credits() {
         link.next().after(get_rank_select(member_id));
     });
 }
+/* Binding */
+$('body').bind('pageload.photo_detail', init_credits);
 
 function init_comments() {
     var wrappers = $('.commentstable');
@@ -836,22 +819,23 @@ function init_comments() {
         timeouts['init_comments'] = window.setTimeout(init_comments, 500);
     }
 }
+/* Binding */
+$('body').bind('pageload.photo_detail', init_comments);
 
 function init_paging() {
-    if(pagetype == 'photo_detail') {
-        // We have to inject event handling code into the page to
-        // Use the native click handlers.
-        var inject_script = "$(document).keydown(function(e) { if (e.keyCode == 37) { console.log('prev'); $('a.prev').click(); } else if(e.keyCode == 39) { console.log('next'); $('a.next').click(); }});";
+    // We have to inject event handling code into the page to
+    // Use the native click handlers.
+    var inject_script = "$(document).keydown(function(e) { if (e.keyCode == 37) { console.log('prev'); $('a.prev').click(); } else if(e.keyCode == 39) { console.log('next'); $('a.next').click(); }});";
 
-        var s = document.createElement('script');
-        s.textContent = inject_script;
-        s.onload = function() {
-            this.parentNode.removeChild(this);
-        };
-        document.head.appendChild(s);
-    }
+    var s = document.createElement('script');
+    s.textContent = inject_script;
+    s.onload = function() {
+        this.parentNode.removeChild(this);
+    };
+    document.head.appendChild(s);
 }
-
+/* Binding */
+$('body').bind('pageload.photo_detail', init_paging);
 
 //  *
 //   *
