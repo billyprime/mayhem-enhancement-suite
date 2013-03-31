@@ -144,8 +144,10 @@ function set_val(name, rank) {
 function init_header() {
     init_navbar();
     build_branding();
-    
-    if(pagetype == 'photo_list' && !($('.mes-submenu').length)) { 
+    if(
+        (pagetype == 'photo_list' || pagetype == 'photo_detail') &&
+        !($('.mes-submenu').length)
+    ) { 
         ev.bind('build.photo_list_submenu', fix_original_header);
     }
     else {
@@ -160,11 +162,9 @@ function build_branding() {
 function fix_original_header() {
     var header_height = $('#mes-main-nav ul li').first().height();
     var orig_top = $(".nav-down").offset().top - header_height;
-    console.log(header_height);
 
-    if(pagetype == 'photo_list') { 
+    if(pagetype == 'photo_list' || pagetype == 'photo_detail') { 
         header_height += $('.mes-submenu').outerHeight(true);
-        console.log( header_height );
     }
 
     $(window).scroll(function() {
