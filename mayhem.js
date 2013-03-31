@@ -141,26 +141,38 @@ function set_val(name, rank) {
 }
 
 /* Branding */
-function init_branding() {
-    build_header();
-    fix_original_header();
+function init_header() {
+    init_navbar();
+    build_branding();
+    
+    if(pagetype == 'photo_list' && !($('.mes-submenu').length)) { 
+        ev.bind('build.photo_list_submenu', fix_original_header);
+    }
+    else {
+        fix_original_header();
+    }
 }
 
-function build_header() {
+function build_branding() {
     $('.header-n').next().after('<span class="mes-branding">enhanced</span>');
 }
 
 function fix_original_header() {
-    $('.mes-branding').ready(function() {
-        var orig_top = $(".nav-down").offset().top - $('.mes-branding').height();
+    var header_height = $('#mes-main-nav ul li').first().height();
+    var orig_top = $(".nav-down").offset().top - header_height;
+    console.log(header_height);
 
-        $(window).scroll(function() {
-            if ($(window).scrollTop() > orig_top) {
-                $(".nav-down").addClass('mes-fixed');
-            } else {
-                $(".nav-down").removeClass('mes-fixed');
-            }
-        });
+    if(pagetype == 'photo_list') { 
+        header_height += $('.mes-submenu').outerHeight(true);
+        console.log( header_height );
+    }
+
+    $(window).scroll(function() {
+        if ($(window).scrollTop() > orig_top) {
+            $(".nav-down").addClass('mes-fixed').css('top', header_height);
+        } else {
+            $(".nav-down").removeClass('mes-fixed').css('top', 'auto');
+        }
     });
 }
 
@@ -481,6 +493,9 @@ function init_navbar() {
                             <a href="/mystuff/friends/">Friends</a>\
                         </li>\
                         <li>\
+                            <a id="mes-trip-planner-link" href="#">Trip Planner</a>\
+                        </li>\
+                        <li>\
                             <a href="/mystuff/friends/topfriends">Top 12</a>\
                         </li>\
                         <li>\
@@ -647,6 +662,14 @@ function init_navbar() {
 
             dialog(settings_box);
         });
+
+        nav.find('#mes-trip-planner-link').click(function(e) {
+            e.preventDefault();
+            $('#mes-people-nav').hide();
+
+            $('#main_container_content').load(chrome.extension.getURL("page/tripplanner.html"));
+        });
+
     }
     else {
         // Logged out
@@ -755,6 +778,8 @@ function photo_list_submenu() {
     }
     gallery.remove();
     $('.head_top.albumBlockHeader').first().remove();
+    
+    ev.trigger('build.photo_list_submenu');
 }
 /* Binding */
 ev.bind('pageload.photo_list', photo_list_submenu);
@@ -855,9 +880,9 @@ function init_paging() {
 ev.bind('pageload.photo_detail', init_paging);
 
 
-init_branding();
-init_navbar();
 init_pagetype();
+init_header();
+init_navbar();
 
 //  *
 //   *

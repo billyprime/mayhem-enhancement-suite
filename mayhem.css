@@ -42,7 +42,6 @@
 
 .nav-down.mes-fixed {
 	position: fixed;
-	top: 23px;
 	width: 800px;
 	z-index: 2;
 }
@@ -74,7 +73,6 @@
 
 #mes-main-nav ul li a {
 	display: block;
-	height: 2em;
 	padding: 3px 10px 2px;
 }
 
