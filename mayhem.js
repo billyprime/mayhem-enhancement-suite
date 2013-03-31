@@ -143,10 +143,25 @@ function set_val(name, rank) {
 /* Branding */
 function init_branding() {
     build_header();
+    fix_original_header();
 }
 
 function build_header() {
     $('.header-n').next().after('<span class="mes-branding">enhanced</span>');
+}
+
+function fix_original_header() {
+    $('.mes-branding').ready(function() {
+        var orig_top = $(".nav-down").offset().top - $('.mes-branding').height();
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > orig_top) {
+                $(".nav-down").addClass('mes-fixed');
+            } else {
+                $(".nav-down").removeClass('mes-fixed');
+            }
+        });
+    });
 }
 
 
@@ -632,14 +647,6 @@ function init_navbar() {
 
             dialog(settings_box);
         });
-
-//         nav.find('#mes-trip-planner-link').click(function(e) {
-//             e.preventDefault();
-//             $('#mes-people-nav').hide();
-// 
-//             $('#main_container_content').load(chrome.extension.getURL("page/tripplanner.html"));
-//         });
-
     }
     else {
         // Logged out
