@@ -1,7 +1,6 @@
-$(document).ready(function() {
-    init_branding();
-    init_navbar();
-    init_pagetype();
+var ev = $({
+    'event_obj': true,
+    'pageload': function () {}
 });
 
 /* Timeouts Helper */
@@ -103,7 +102,8 @@ function init_pagetype() {
     else if(false) {
         pagetype = 'forum';
     }
-    $('body').trigger('pageload.'+pagetype);
+    console.log('pageload.'+pagetype);
+    ev.trigger('pageload.'+pagetype);
 }
 
 /* Storage Handlers */
@@ -142,8 +142,13 @@ function set_val(name, rank) {
 
 /* Branding */
 function init_branding() {
+    build_header();
+}
+
+function build_header() {
     $('.header-n').next().after('<span class="mes-branding">enhanced</span>');
 }
+
 
 /* Ranks */
 var ranks = {
@@ -218,7 +223,7 @@ function init_vips() {
     }
 }
 /* Binding */
-$('body').bind('pageload.home', init_vips);
+ev.bind('pageload.home', init_vips);
 
 function init_announcements() {
     if($('#announcementsArea').length) {
@@ -241,10 +246,10 @@ function init_announcements() {
     }
 }
 /* Binding */
-$('body').bind('pageload.home', init_announcements);
+ev.bind('pageload.home', init_announcements);
 
 function init_search_results() {
-    if($('.bResultWraper').length) {
+console.log('search');
         var rows = $('.bResultWraper .bInfoWraper');
 
 
@@ -268,15 +273,15 @@ function init_search_results() {
 //             });
         }
         else {
+            console.log('retry search');
             // Retry, results aren't loaded yet.
-            clear_all_timeouts();
             timeouts.push(window.setTimeout(init_search_results, 500));
         }
 
-    }
+
 }
 /* Binding */
-$('body').bind('pageload.search', init_search_results);
+ev.bind('pageload.search', init_search_results);
 
 function init_main_member() {
     // This one is easy.  Maybe a little too easy.
@@ -292,7 +297,7 @@ function init_main_member() {
     name.after(get_rank_select(member_id));
 }
 /* Binding */
-$('body').bind('pageload.member', init_main_member);
+ev.bind('pageload.member', init_main_member);
 
 function init_toptwelve() {
     var friend_container = $('.head:contains("Friends")').first().next();
@@ -314,7 +319,7 @@ function init_toptwelve() {
     }
 }
 /* Binding */
-$('body').bind('pageload.member', init_toptwelve);
+ev.bind('pageload.member', init_toptwelve);
 
 function init_tags() {
     var tags = $('#tags .tag'); // That was nice of them.
@@ -335,26 +340,24 @@ function init_tags() {
     }
     else {
         // Retry, tags aren't loaded yet.
-        clear_all_timeouts();
         timeouts.push(window.setTimeout(init_tags, 500));
     }
 }
 /* Binding */
-$('body').bind('pageload.member', init_tags);
-$('body').bind('pageload.tags', init_tags);
+ev.bind('pageload.member', init_tags);
+ev.bind('pageload.tags', init_tags);
 
 function tags_pagination_reinit() {
     // There's already a click handler, so we just want to add another.
     // We don't have access to the load event directly,
     // so we just guess.
     $('.strPagination a').live('click', function() {
-        clear_all_timeouts();
         timeouts.push(window.setTimeout(init_tags, 500));
         timeouts.pus(window.setTimeout(tags_pagination_reinit, 500));
     });
 }
 /* Binding */
-$('body').bind('pageload.tags', tags_pagination_reinit);
+ev.bind('pageload.tags', tags_pagination_reinit);
 
 function get_rank_select(id) {
     var param_name = 'member_rank_'+id;
@@ -630,6 +633,13 @@ function init_navbar() {
             dialog(settings_box);
         });
 
+//         nav.find('#mes-trip-planner-link').click(function(e) {
+//             e.preventDefault();
+//             $('#mes-people-nav').hide();
+// 
+//             $('#main_container_content').load(chrome.extension.getURL("page/tripplanner.html"));
+//         });
+
     }
     else {
         // Logged out
@@ -740,7 +750,7 @@ function photo_list_submenu() {
     $('.head_top.albumBlockHeader').first().remove();
 }
 /* Binding */
-$('body').bind('pageload.photo_list', photo_list_submenu);
+ev.bind('pageload.photo_list', photo_list_submenu);
 
 function photo_detail_submenu() {
     var table = $('#main_container_content table').first();
@@ -785,7 +795,7 @@ function photo_detail_submenu() {
     right_col.html( right_col.html().replace(/Toggle Worksafe Mode/, 'Worksafe') );
 }
 /* Binding */
-$('body').bind('pageload.photo_detail', photo_detail_submenu);
+ev.bind('pageload.photo_detail', photo_detail_submenu);
 
 function init_credits() {
     $('#pic_credits').html(
@@ -801,7 +811,7 @@ function init_credits() {
     });
 }
 /* Binding */
-$('body').bind('pageload.photo_detail', init_credits);
+ev.bind('pageload.photo_detail', init_credits);
 
 function init_comments() {
     var wrappers = $('.commentstable');
@@ -820,7 +830,7 @@ function init_comments() {
     }
 }
 /* Binding */
-$('body').bind('pageload.photo_detail', init_comments);
+ev.bind('pageload.photo_detail', init_comments);
 
 function init_paging() {
     // We have to inject event handling code into the page to
@@ -835,7 +845,12 @@ function init_paging() {
     document.head.appendChild(s);
 }
 /* Binding */
-$('body').bind('pageload.photo_detail', init_paging);
+ev.bind('pageload.photo_detail', init_paging);
+
+
+init_branding();
+init_navbar();
+init_pagetype();
 
 //  *
 //   *
